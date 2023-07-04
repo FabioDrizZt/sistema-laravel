@@ -13,7 +13,7 @@ class EmpleadoController extends Controller
      */
     public function index()
     {
-        $datos['empleados'] = Empleado::paginate(5);
+        $datos['empleados'] = Empleado::paginate(3);
         return view('empleado.index',$datos);
     }
 
@@ -30,6 +30,20 @@ class EmpleadoController extends Controller
      */
     public function store(Request $request)
     {
+        $reglas=[
+            'Nombre'=>'required|string|max:100',
+            'Apellido'=>'required|string|max:100',
+            'Correo'=>'required|email',
+            'Foto'=>'required|max:10000|mimes:jpeg,png,jpg',
+        ];
+
+        $mensaje=[
+                    'required'=>'El :attribute es requerido',
+                    'Foto.required'=>'La foto es requerida',
+                ];
+
+        $this->validate($request, $reglas, $mensaje);
+
         $datosEmpleados = $request->except("_token");
         if($request->hasFile('Foto')){
             $datosEmpleados['Foto']=$request->file('Foto')->store('uploads','public');
@@ -62,8 +76,25 @@ class EmpleadoController extends Controller
     public function update(Request $request, $id)
 
     {
-
         // Metodo para manejar un PATCH a empleado/{id_empleado}
+        //Validación de campos:
+
+        $validacion = [
+            'Nombre' => 'required|string|max:100',
+            'Apellido' => 'required|string|max:100',
+            'Correo' => 'required|email',
+        ];
+
+        $mensaje = [
+            'required' => 'El campo :attribute es requerido.',
+        ];
+
+        if ($request->hasFile('Foto')) {
+            $validacion['Foto'] = 'required|max:10000|mimes:jpeg,png,jpg,webp';
+            $mensaje['Foto.required'] = 'La foto es requerida.';
+        }
+
+        $this->validate($request, $validacion, $mensaje);
 
         $datosEmpleado = Request()->except(['_token', '_method']);
 
@@ -81,7 +112,7 @@ class EmpleadoController extends Controller
 
         $empleado = Empleado::findOrFail($id);
 
-        return view('empleado.edit', compact('empleado'));
+        return redirect('empleado')->with('mensaje','Empleado Actualizado');
 
     }
 

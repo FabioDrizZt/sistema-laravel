@@ -4,10 +4,22 @@
 
 <div class="container">
 
-    <a href="{{ url('empleado/create')}}">Crear nuevo empleado</a>
+    <a href="{{ url('empleado/create')}}" class="btn btn-success">Crear nuevo empleado</a>
     <br>
     @if (Session::has('mensaje'))
-        <p>{{ Session::get('mensaje') }}</p>
+
+    <div class="alert alert-success alert-dismissible" role="alert">
+
+       <p>{{ Session::get('mensaje') }}</p>
+
+       <button class="close" data-dismiss="alert" aria-label="Close">
+
+          <span aria-hidden="true">&times</span>
+
+       </button>
+
+    </div>
+
     @endif
     <br>
     <table>
@@ -28,18 +40,19 @@
             <td>{{ $empleado->Nombre }}</td>
             <td>{{ $empleado->Apellido }}</td>
             <td>{{ $empleado->Correo }}</td>
-            <td><img src="{{ asset('storage') . '/' . $empleado->Foto }}" width="80px"></td>
+            <td><img class="img-thumbnail img-fluid" src="{{ asset('storage') . '/' . $empleado->Foto }}" width="80px"></td>
             <td>
-                <a href="{{url('/empleado/' . $empleado->id) . '/edit'}}">Editar</a>
+                <a class="btn btn-warning" href="{{url('/empleado/' . $empleado->id) . '/edit'}}">Editar</a>
 
-                <form action="{{ url('/empleado/' . $empleado->id) }}" method="post">
+                <form class="d-inline" action="{{ url('/empleado/' . $empleado->id) }}" method="post">
                 @csrf
                 {{ method_field('DELETE')}}
-                <input type="submit" value="Borrar" onclick="return confirm('Esta seguro que desea eliminar?')">
+                <input  class="btn btn-danger" type="submit" value="Borrar" onclick="return confirm('Esta seguro que desea eliminar?')">
                 </form>
             </td>
         </tr>
     @endforeach
     </tbody>
     </table>
+    {!! $empleados->links() !!}
 </div>
