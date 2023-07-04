@@ -1,4 +1,4 @@
-
+    <h1>{{$accion}} Empleado</h1>
     @csrf
     <br>
     <label for= "Nombre"></label>Nombre: </label>
@@ -16,4 +16,6 @@
     <br>
     <input type="file" name="Foto" id="Foto">
     <br>
-    <input type="submit" value="Enviar"/>
+    <input type="submit" value="{{$accion}}"/>
+    <br>
+    <a href="{{url('empleado')}}">Regresar</a>

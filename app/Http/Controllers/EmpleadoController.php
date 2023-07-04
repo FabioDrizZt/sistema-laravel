@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Empleado;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EmpleadoController extends Controller
 {
@@ -34,7 +35,7 @@ class EmpleadoController extends Controller
             $datosEmpleados['Foto']=$request->file('Foto')->store('uploads','public');
         }
         Empleado::insert($datosEmpleados);
-        return response()->json($datosEmpleados);
+        return redirect('empleado')->with('mensaje', 'Empleado creado con éxito.');
     }
 
     /**
@@ -61,9 +62,20 @@ class EmpleadoController extends Controller
     public function update(Request $request, $id)
 
     {
+
         // Metodo para manejar un PATCH a empleado/{id_empleado}
 
         $datosEmpleado = Request()->except(['_token', '_method']);
+
+        if($request->hasFile('Foto')){
+
+            $empleado = Empleado::findOrFail($id);
+
+            Storage::delete('public/' . $empleado->Foto);
+
+            $datosEmpleado['Foto'] = $request->file('Foto')->store('uploads','public');
+
+        }
 
         Empleado::where('id', '=', $id)->update($datosEmpleado);
 
@@ -77,9 +89,17 @@ class EmpleadoController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy($id)
+
     {
-         // Metodo para manejar un DELETE
-         Empleado::destroy($id);
-         return redirect('empleado');
+
+        // Metodo para manejar un DELETE
+
+        $empleado = Empleado::findOrFail($id);
+
+        Storage::delete('public/' . $empleado->Foto);
+
+        Empleado::destroy($id);
+
+        return redirect('empleado')->with('mensaje','Empleado borrado correctamente.');
     }
 }

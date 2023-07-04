@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmpleadoController;
 
@@ -15,7 +16,27 @@ use App\Http\Controllers\EmpleadoController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
-Route::resource('empleado', EmpleadoController::class );
+Route::resource('empleado', EmpleadoController::class )->middleware('auth');
+
+Route::group(['middleware' => 'auth'],function () {
+
+    Route::get('/', [EmpleadoController::class, 'index'])->name('home');
+
+});
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+// Deshabilitar ruta de registro
+Auth::routes(['register' => false]);
+
+// Deshabilitar ruta de restablecimiento de contraseña
+Auth::routes(['reset' => false]);
